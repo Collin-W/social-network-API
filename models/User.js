@@ -5,20 +5,31 @@ const User = new Schema(
         username: {
             type: String,
             required: true,
+            unique: true,
             trim: true
         },
         email: {
             type: String,
             required: true,
             unique: true,
+            //basic email validaion 
+            match:[/^(.+)@(.+)$/]
 //email validation
         },
         thoughts: [_id],
         friends: [_id]
-    }
+    },
+    {
+    toJSON: {
+        virtuals: true
+    },
+    id: false
+}
+
 )
 
-//need virtual "Create a virtual called friendCount that retrieves the length of the user's friends array field on query."
-
+User.virtual('friendCount').get(function () {
+    return this.friends.length
+})
 
 module.exports = User
