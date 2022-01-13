@@ -1,14 +1,16 @@
-const { Schema } = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 
 
 
-const Thought = new Schema(
+const ThoughtSchema = new Schema(
     {
         thoughtText: {
             type: String,
             required: true,
            //1-280 chars
+           min: 1,
+           max:280
         },
         createdAt: {
             type: Date,
@@ -22,6 +24,14 @@ const Thought = new Schema(
           },
 
           reactions: [reactionSchema]
+    },
+    {
+        toJSON: {
+            virtuals: true,
+            getters: true
+
+        },
+        id: false
     }
 )
 
