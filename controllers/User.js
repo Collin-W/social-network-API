@@ -1,15 +1,18 @@
-import User from '../models'
+// import User from '../models'
+const { User } = require('../models');
+
 
 const userController = {
 
 //get all users
 
 getAllUsers(req, res) {
-    Users.find({})
-      .then(dbUsersData => res.json(dbUsersData))
+    User.find({})
+      .then(dbUserData => res.json(dbUserData))
       .catch(err => {
         console.log(err);
-        res.status(400).json(err);
+        // res.status(400).json(err);
+        res.sendStatus(400);
       });
   },
 
@@ -72,4 +75,4 @@ deleteUser({ params }, res) {
 
 }
 
-export default userController
+module.exports = userController

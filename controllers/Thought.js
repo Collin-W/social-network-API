@@ -1,18 +1,55 @@
-import  Thought from '../models'
+// import Thought from '../models'
+// import User from '../models'
+
+const { Thought, User } = require('../models');
 
 const thoughtController = {
 
-//get all thoughts
+    
+    // getAllThought(req, res) {
+     
+    //       .then(dbUsersData => res.json(dbUsersData))
+    //       .catch(err => {
+    //         console.log(err);
+    //         res.status(400).json(err);
+    //       });
+    //   },
 
-//get one  thought by id
 
-//make new thought
 
-//update  thought
 
-//delete  thought
+    // getThoughtById
 
+
+
+    
+    createThought({ params, body }, res) {
+        console.log(params);
+        Thought.create(body)
+          .then(({ _id }) => {
+            return User.findOneAndUpdate(
+              { _id: params.userId },
+              { $push: { thoughts: _id } },
+              { new: true }
+            );
+          })
+          .then(dbUserData => {
+            console.log(dbUserData);
+            if (!dbUserData) {
+              res.status(404).json({ message: 'No User found with this id!' });
+              return;
+            }
+            res.json(dbUserData);
+          })
+          .catch(err => res.json(err));
+      },
+
+
+
+
+    // updateThought,
+    
 
 }
 
-export default thoughtController
+module.exports = thoughtController
