@@ -1,22 +1,37 @@
-// import Thought from '../models'
-// import User from '../models'
-
 const { Thought, User } = require("../models");
 
 const thoughtController = {
-  // getAllThought(req, res) {
+  getAllThought(req, res) {
+    Thought.find({})
+      .populate({
+        path: 'thoughts',
+        select: '-__v'
+      })
+      .select('-__v')
+      .sort({ _id: -1 })
+      .then(dbThoughtData => res.json(dbThoughtData))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(400);
+      });
+  },
 
-  //       .then(dbUsersData => res.json(dbUsersData))
-  //       .catch(err => {
-  //         console.log(err);
-  //         res.status(400).json(err);
-  //       });
-  //   },
-
-  // getThoughtById,
+  
+  getThoughtById({ params }, res) {
+    Thought.findOne({ _id: params.id })
+      .populate({
+        path: 'thoughts',
+        select: '-__v'
+      })
+      .select('-__v')
+      .then(dbThoughtData => res.json(dbThoughtData))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(400);
+      });
+  },
 
   createThought({ params, body }, res) {
-    console.log(params);
     Thought.create(body)
       .then(({ _id }) => {
         return User.findOneAndUpdate(
@@ -36,9 +51,23 @@ const thoughtController = {
       .catch((err) => res.json(err));
   },
 
-  // updateThought,
-
-  //addReaction,
+  
+  
+  addReaction({ params, body }, res) {
+    Thought.findOneAndUpdate(
+      { _id: params.thoughtId },
+      { $push: { replies: body } },
+      { new: true, runValidators: true }
+    )
+      .then(dbReactionData => {
+        if (!dbReactionData) {
+          res.status(404).json({ message: 'No Reaction found with this id!' });
+          return;
+        }
+        res.json(dbReactionData);
+      })
+      .catch(err => res.json(err));
+  },
 };
 
 module.exports = thoughtController;
